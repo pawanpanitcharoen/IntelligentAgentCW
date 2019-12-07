@@ -37,8 +37,12 @@ public class Agent44 extends AbstractNegotiationParty
     }
 
     /**
-     * Makes a random offer above the minimum utility target
-     * Accepts everything above the reservation value at the very end of the negotiation; or breaks off otherwise.
+     * The agent offers a random bid from BidRanking which has been limiting the boundary according to our
+     * concession strategy. We assume that after half of the negotiation, the agent will now have enough information
+     * about the opponent to create an opponent model. The agent will attempt to offer a bid at the nash point after half match.
+     * However, the agent still conceded as time pass. At each round, the agent will check whether it is going to accept
+     * the offer by using the strategy that we adopt from an academic paper. Nevertheless, if the negotiation is
+     * approaching the end the agent will accept an offer at the last minute to not lose the deal.
      */
     @Override
     public Action chooseAction(List<Class<? extends Action>> possibleActions)
@@ -57,6 +61,11 @@ public class Agent44 extends AbstractNegotiationParty
         return new Offer(getPartyId(), offer_bid);
     }
 
+    /**
+     * The function generates Bid by using nash bargaining solution. First, the calculateConcession function is called
+     * before the agent finds a bid. Then, we estimate the utility of the opponent and the user to find out the offer at
+     * the nash point.
+     */
     private Bid generateNashBid(){
         calculateConcession();
         Bid nashBid = null;
@@ -75,6 +84,10 @@ public class Agent44 extends AbstractNegotiationParty
         return nashBid;
     }
 
+    /**
+     * The function generates Bid according to the concession rate. The lower bound of the BidRanking expand over time
+     * to expand the possibility of finding the offer that opponent wants.
+     */
     private Bid getrandomBidWithConcession(){
         calculateConcession();
         BidRanking bidRanking = userModel.getBidRanking();
@@ -84,16 +97,22 @@ public class Agent44 extends AbstractNegotiationParty
         return bidList.get(randomNumber);
     }
 
+    /**
+     * The function increase the concession rate after 10 per cent of the time has passed.
+     */
 
     private void calculateConcession(){
         if(timeline.getCurrentTime()%10 == 0){
             this.consessRate += 0.1;
         }
     }
-    /**
-     * Remembers the offers received by the opponent.
-     */
 
+
+    /**
+     * The agent update opponent model at every round. We adopt the opponent model from Johny Black which uses
+     * a frequency table to construct weight of issue and value of the option. The agent can use information in the
+     * table to estimate the utility that the opponent offered, and also estimate the utility that the opponent will get.
+     */
     @Override
     public void receiveMessage(AgentID sender, Action action)
     {
@@ -110,9 +129,7 @@ public class Agent44 extends AbstractNegotiationParty
         return "Offer bid by considering the nash point to maintain fairness";
     }
 
-    /**
-     * This stub can be expanded to deal with preference uncertainty in a more sophisticated way than the default behavior.
-     */
+
     @Override
     public AbstractUtilitySpace estimateUtilitySpace()
     {
