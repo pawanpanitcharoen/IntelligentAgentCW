@@ -27,14 +27,14 @@ public class userModeling {
             for (ValueDiscrete valueDiscrete : issueDiscrete.getValues()) {
                 bidmapIndex.put(valueDiscrete.getValue(), bidmapIndex.size());
             }
-            bidmapIndex.put(issue.getName(),bidmapIndex.size());
-            alloptionSize += (issueDiscrete.getValues().size()+1);
+            alloptionSize += (issueDiscrete.getValues().size());
         }
 
         double[] objectives = new double[alloptionSize+(bidrankingSize-1)];
-        Arrays.fill(objectives, 0.0);
-        for(Issue issue : issues){
-            objectives[bidmapIndex.get(issue.getName())] = 1;
+        Arrays.fill(objectives, 1.0);
+        for(int i = 0;i< alloptionSize;i++){
+            objectives[i] = 0;
+
         }
 
         LinearProgram lp = new LinearProgram(objectives);
