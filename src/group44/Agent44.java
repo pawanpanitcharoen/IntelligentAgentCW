@@ -21,18 +21,21 @@ public class Agent44 extends AbstractNegotiationParty
     private int minimum_index;
     private double consessRate = 0.1;
     private Negotiator negotiator;
-    private opponentModel opponent_Model;
+    private opponentModeling opponent_Model;
+    private userModeling user_Model;
 
     @Override
     public void init(NegotiationInfo info)
     {
         super.init(info);
         negotiator = new Negotiator(timeline.getTotalTime());
-        opponent_Model = new opponentModel();
+        opponent_Model = new opponentModeling();
+        user_Model = new userModeling();
         AbstractUtilitySpace utilitySpace = info.getUtilitySpace();
         AdditiveUtilitySpace additiveUtilitySpace = (AdditiveUtilitySpace) utilitySpace;
         List< Issue > issues = additiveUtilitySpace.getDomain().getIssues();
         opponent_Model.init_freq_table(issues);
+        user_Model.initialLinearProgram(issues,userModel);
 
     }
 
@@ -120,7 +123,6 @@ public class Agent44 extends AbstractNegotiationParty
             lastOffer = ((Offer) action).getBid();
             opponent_Model.update_freq_table(lastOffer);
         }
-
     }
 
     @Override

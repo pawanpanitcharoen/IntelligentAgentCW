@@ -9,7 +9,7 @@ import genius.core.utility.EvaluatorDiscrete;
 import java.util.ArrayList;
 import java.util.List;
 
-public class opponentModel {
+public class opponentModeling {
     private ArrayList<freqIssue> oppent_issues = new ArrayList<freqIssue>();
     private ArrayList<Double> utility = new ArrayList<Double>();
     private double current_opponent_utility_value = 0;
